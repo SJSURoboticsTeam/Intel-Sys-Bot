@@ -20,6 +20,11 @@
 int drive_pwm = 8;
 int drive_direction = 26;
 
+int input_speed = 0;
+int speed = 0;
+int steer_angle = 0;
+bool forward = true;
+
 Servo myservo;
 
 void Move(bool forward, int speed)
@@ -51,9 +56,6 @@ void setup()
 }
 void loop()
 {
-  bool forward = true;
-  int speed = 0;
-  int steer_angle = 0;
   int trash = 0;
 
   if (Serial.available() > 0)
@@ -61,23 +63,27 @@ void loop()
     String data = Serial.readStringUntil('\n');
     Serial.print("You sent me: ");
     Serial.println(data);
+    
     char kResponseBodyFormat[] = "{\"HB\":%d,\"IO\":%d,\"WO\":%d,\"DM\":\"%c\",\"CMD\":[%d,%d]}\n";
-    //TODO: Handle bad data (?)
     int actual_arguments = sscanf(
         data.c_str(), kResponseBodyFormat,
-        &trash, &trash, &trash, &trash, &speed, &steer_angle);
-    Serial.print(speed);
+        &trash, &trash, &trash, &trash, &input_speed, &steer_angle);
+    
+    //Validate input
+    Serial.println(actual_arguments);
+    Serial.println(speed);
+    Serial.println(steer_angle);
   }
 
-  delay(1000);
-  if(speed > 0) {
+  delay(100);
+  if(input_speed > 0) {
     forward = true;
   }
   else {
     forward = false;
   }
 
-  speed = abs(speed);
+  speed = abs(input_speed);
   Move(forward, speed); // pass in true for forward, false for reverse
   myservo.write(steer_angle);
 }
