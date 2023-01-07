@@ -24,6 +24,10 @@ int input_speed = 0;
 int speed = 0;
 int steer_angle = 0;
 int steer_angle_clamped = 0;
+int hb = 0;
+int io = 0;
+int wo = 0;
+int dm = 'D';
 bool forward = true;
 
 Servo myservo;
@@ -57,18 +61,20 @@ void setup()
 }
 void loop()
 {
-  int trash = 0;
+  char kResponseBodyFormat[] = "{\"HB\":%d,\"IO\":%d,\"WO\":%d,\"DM\":\"%c\",\"CMD\":[%d,%d]}\n";
+  char statusString[70];
+  sprintf(statusString, kResponseBodyFormat, hb, io, wo, dm, input_speed, steer_angle);
+  Serial.println(statusString);
 
   if (Serial.available() > 0)
   {
     String data = Serial.readStringUntil('\n');
     Serial.print("You sent me: ");
     Serial.println(data);
-    
-    char kResponseBodyFormat[] = "{\"HB\":%d,\"IO\":%d,\"WO\":%d,\"DM\":\"%c\",\"CMD\":[%d,%d]}\n";
+  
     int actual_arguments = sscanf(
         data.c_str(), kResponseBodyFormat,
-        &trash, &trash, &trash, &trash, &input_speed, &steer_angle);
+        &hb, &io, &wo, &dm, &input_speed, &steer_angle);
     
     //Validate input
     Serial.println(actual_arguments);
