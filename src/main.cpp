@@ -69,20 +69,20 @@ void loop()
   if (Serial.available() > 0)
   {
     String data = Serial.readStringUntil('\n');
-    Serial.print("You sent me: ");
-    Serial.println(data);
+    // Serial.print("You sent me: ");
+    // Serial.println(data);
   
     int actual_arguments = sscanf(
         data.c_str(), kResponseBodyFormat,
         &hb, &io, &wo, &dm, &input_speed, &steer_angle);
     
     //Validate input
-    Serial.println(actual_arguments);
-    Serial.println(speed);
-    Serial.println(steer_angle);
+    // Serial.println(actual_arguments);
+    // Serial.println(speed);
+    // Serial.println(steer_angle);
     steer_angle_clamped = min(140, max(steer_angle + angle_offset, 90));
-    Serial.print("Clamped angle for servo is ");
-    Serial.println(steer_angle_clamped);
+    // Serial.print("Clamped angle for servo is ");
+    // Serial.println(steer_angle_clamped);
   }
 
   delay(100);
